@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+}
+
+body {
+  @apply antialiased text-gray-900 bg-gray-100;
+}
