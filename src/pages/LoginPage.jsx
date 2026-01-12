@@ -15,9 +15,16 @@ const GoogleIcon = ({ className }) => (
     </svg>
 );
 
+import { useNavigate } from 'react-router-dom';
+
 const LoginPage = () => {
     const [role, setRole] = useState('owner');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+    const handleLogin = () => {
+        navigate('/dashboard');
+    };
 
     return (
         <AuthLayout title="Aangan" subtitle="Homestay Management ERP">
@@ -82,7 +89,10 @@ const LoginPage = () => {
                         </Button>
                     </div>
 
-                    <Button className="mt-2 bg-emerald-800 hover:bg-emerald-900 group">
+                    <Button
+                        onClick={handleLogin}
+                        className="mt-2 bg-emerald-800 hover:bg-emerald-900 group"
+                    >
                         Sign In <span className="group-hover:translate-x-1 transition-transform">→</span>
                     </Button>
 
