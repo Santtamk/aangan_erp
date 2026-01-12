@@ -168,7 +168,7 @@ const BookingsPage = () => {
                             <CalendarIcon className="w-5 h-5 text-orange-500" />
                         </div>
 
-                        <div className="flex justify-between items-center overflow-x-auto gap-2 pb-2 hide-scrollbar">
+                        <div className="flex justify-between items-center overflow-x-auto gap-2 py-2 px-2 hide-scrollbar">
                             {days.map((item) => {
                                 const isSelected = isSameDay(item.dateObj, selectedDate);
                                 return (
