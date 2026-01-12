@@ -42,6 +42,7 @@ const CalendarView = ({ bookings, onClose, onNewBooking, onRangeSelected }) => {
                 setViewMode={setViewMode}
             />
             
+            {/* //optional large calendar */}
             <div className="flex-1 overflow-hidden">
                 <CalendarGrid 
                     currentMonth={currentMonth}
