@@ -5,6 +5,7 @@ import DashboardHome from './pages/DashboardHome';
 import BookingsPage from './pages/BookingsPage';
 import InventoryPage from './pages/InventoryPage';
 import StaffPage from './pages/StaffPage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="bookings" element={<BookingsPage />} />
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="staff" element={<StaffPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
 
         {/* Catch all redirect to login */}

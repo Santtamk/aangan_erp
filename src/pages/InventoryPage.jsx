@@ -1,7 +1,10 @@
-import { Search, SlidersHorizontal, Plus, AlertTriangle, ScrollText } from 'lucide-react';
+import { useState } from 'react';
+import { Search, SlidersHorizontal, Plus, AlertTriangle, ScrollText, Minus } from 'lucide-react';
 import RoomCard from '../components/RoomCard';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import { useInventory } from '../hooks/useInventory';
+import { cn } from '../utils/cn';
 
 const InventoryPage = () => {
     const rooms = [
@@ -29,6 +32,14 @@ const InventoryPage = () => {
         }
     ];
 
+    const { inventory, updateStock, getLowStockItems, getItemsByCategory } = useInventory();
+    const [activeTab, setActiveTab] = useState('Rooms');
+
+
+    const lowStockItems = getLowStockItems();
+    const supplies = getItemsByCategory('Supplies');
+    const amenities = getItemsByCategory('Amenities');
+
     return (
         <div className="flex flex-col gap-6">
             {/* Header */}
@@ -43,7 +54,7 @@ const InventoryPage = () => {
                     </div>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">Inventory</h1>
-                        <p className="text-gray-500 text-xs font-medium">स्टक व्यवस्थापन | Nepali</p>
+                        {/* <p className="text-gray-500 text-xs font-medium">स्टक व्यवस्थापन | Nepali</p> */}
                     </div>
                 </div>
                 <button className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/30 text-white hover:bg-orange-600 transition-colors">
@@ -51,11 +62,26 @@ const InventoryPage = () => {
                 </button>
             </div>
 
-            {/* Tabs (Visual only for now) */}
+            {/* Tabs */}
             <div className="bg-white rounded-xl p-1 shadow-sm flex mx-auto relative z-10 w-full overflow-hidden text-sm font-bold text-gray-400">
-                <button className="flex-1 py-2 text-emerald-800 border-b-2 border-emerald-800">Rooms (12)</button>
-                <button className="flex-1 py-2">Supplies (48)</button>
-                <button className="flex-1 py-2">Amenities (24)</button>
+                {['Rooms', 'Supplies', 'Amenities'].map(tab => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={cn(
+                            "flex-1 py-2 transition-colors duration-200",
+                            activeTab === tab 
+                                ? "text-emerald-800 border-b-2 border-emerald-800 bg-emerald-50/50" 
+                                : "hover:text-emerald-600 hover:bg-gray-50"
+                        )}
+                    >
+                        {tab} <span className="text-xs ml-1 opacity-60">
+                            {tab === 'Rooms' ? rooms.length : 
+                             tab === 'Supplies' ? supplies.length : 
+                             amenities.length}
+                        </span>
+                    </button>
+                ))}
             </div>
 
             {/* Search Filter */}
@@ -73,57 +99,87 @@ const InventoryPage = () => {
                 </button>
             </div>
 
-            {/* Room Status Section */}
+            {/* Content Area */}
             <div>
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-emerald-900 uppercase tracking-widest text-sm">Room Status</h3>
-                    <span className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-xs font-bold">8/12 Occupied</span>
+                    <h3 className="font-bold text-emerald-900 uppercase tracking-widest text-sm">{activeTab} Status</h3>
+                    {activeTab === 'Rooms' && <span className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-xs font-bold">8/12 Occupied</span>}
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    {rooms.map(room => (
-                        <RoomCard key={room.id} room={room} />
-                    ))}
+                    {activeTab === 'Rooms' ? (
+                        rooms.map(room => (
+                            <RoomCard key={room.id} room={room} />
+                        ))
+                    ) : (
+                        (activeTab === 'Supplies' ? supplies : amenities).map(item => (
+                            <div key={item.id} className="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-gray-100 hover:border-emerald-200 transition-colors">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-2xl">
+                                        {item.icon}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-800">{item.name}</h4>
+                                        <p className="text-xs text-gray-400 font-medium">Min: {item.minStock} {item.unit}</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex items-center gap-4">
+                                    <div className={cn(
+                                        "text-right mr-2",
+                                        item.stock <= item.minStock ? "text-red-500" : "text-emerald-600"
+                                    )}>
+                                        <p className="font-bold text-lg">{item.stock}</p>
+                                        <p className="text-[10px] uppercase font-bold tracking-wider">{item.unit}</p>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                                        <button 
+                                            onClick={() => updateStock(item.id, -1)}
+                                            className="w-8 h-8 rounded-md bg-white text-gray-600 shadow-sm flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all"
+                                        >
+                                            <Minus className="w-4 h-4" />
+                                        </button>
+                                        <button 
+                                            onClick={() => updateStock(item.id, 1)}
+                                            className="w-8 h-8 rounded-md bg-emerald-500 text-white shadow-sm flex items-center justify-center hover:bg-emerald-600 active:scale-95 transition-all"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
 
             {/* Low Stock Alerts */}
-            <div className="bg-orange-50 rounded-3xl p-5 border border-orange-100">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-bold text-orange-500 text-lg">Low Stock Alerts (4)</h3>
-                    <AlertTriangle className="w-6 h-6 text-orange-500" />
-                </div>
-
-                <div className="flex flex-col gap-3">
-                    <div className="bg-white p-3 rounded-2xl flex items-center justify-between shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
-                                {/* Soap SVG placeholder */}
-                                <span className="text-xl">🧼</span>
-                            </div>
-                            <span className="font-bold text-gray-800">Soap Bars</span>
-                        </div>
-                        <div className="text-right">
-                            <p className="font-bold text-red-500">12 left</p>
-                            <p className="text-[10px] text-gray-400">Min: 50</p>
-                        </div>
+            {lowStockItems.length > 0 && (
+                <div className="bg-orange-50 rounded-3xl p-5 border border-orange-100">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="font-bold text-orange-500 text-lg">Low Stock Alerts ({lowStockItems.length})</h3>
+                        <AlertTriangle className="w-6 h-6 text-orange-500" />
                     </div>
 
-                    <div className="bg-white p-3 rounded-2xl flex items-center justify-between shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
-                                {/* Toilet Paper SVG placeholder */}
-                                <span className="text-xl">🧻</span>
+                    <div className="flex flex-col gap-3">
+                        {lowStockItems.map(item => (
+                            <div key={item.id} className="bg-white p-3 rounded-2xl flex items-center justify-between shadow-sm">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
+                                        <span className="text-xl">{item.icon}</span>
+                                    </div>
+                                    <span className="font-bold text-gray-800">{item.name}</span>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-bold text-red-500">{item.stock} left</p>
+                                    <p className="text-[10px] text-gray-400">Min: {item.minStock}</p>
+                                </div>
                             </div>
-                            <span className="font-bold text-gray-800">Toilet Rolls</span>
-                        </div>
-                        <div className="text-right">
-                            <p className="font-bold text-red-500">5 left</p>
-                            <p className="text-[10px] text-gray-400">Min: 20</p>
-                        </div>
+                        ))}
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Stock Update Request */}
             <div className="bg-emerald-800 rounded-3xl p-6 text-white text-center pb-8">

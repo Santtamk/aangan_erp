@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Home, Calendar, Package, Users, Bell, ChevronDown } from 'lucide-react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Home, Calendar, Package, Users, Bell, ChevronDown, LogOut, Settings } from 'lucide-react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../utils/cn';
 
 const DashboardLayout = () => {
-    const [lang, setLang] = useState('EN');
+    // const [lang, setLang] = useState('EN'); // Removed in favor of Settings Page
     const location = useLocation();
+    const navigate = useNavigate();
 
     const navItems = [
         { name: 'Home', icon: Home, path: '/dashboard' },
@@ -36,9 +37,13 @@ const DashboardLayout = () => {
                             <span className="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full border border-emerald-800"></span>
                         </button>
 
-                        {/* Language Selector */}
-                        <button className="flex items-center gap-1 bg-white/20 px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-sm hover:bg-white/30 transition-colors">
-                            {lang} <ChevronDown className="w-3 h-3" />
+                        {/* Settings Button (Replaces Language Selector) */}
+                        <button 
+                            onClick={() => navigate('/dashboard/settings')}
+                            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm transition-colors text-white"
+                            title="Settings"
+                        >
+                            <Settings className="w-5 h-5" />
                         </button>
 
                         {/* Logout Button */}
@@ -47,9 +52,7 @@ const DashboardLayout = () => {
                             className="w-9 h-9 flex items-center justify-center rounded-full bg-red-500/80 hover:bg-red-600 backdrop-blur-sm transition-colors text-white"
                             title="Logout"
                         >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
+                            <LogOut className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
