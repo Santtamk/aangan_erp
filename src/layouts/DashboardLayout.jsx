@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, Calendar, Package, Users, Bell, ChevronDown, LogOut, Settings } from 'lucide-react';
+import { Home, Calendar, Package, Users, Bell, ChevronDown, LogOut, Settings, User } from 'lucide-react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '../utils/cn';
 
@@ -12,7 +12,7 @@ const DashboardLayout = () => {
         { name: 'Home', icon: Home, path: '/dashboard' },
         { name: 'Bookings', icon: Calendar, path: '/dashboard/bookings' },
         { name: 'Inventory', icon: Package, path: '/dashboard/inventory' },
-        { name: 'Staff', icon: Users, path: '/dashboard/staff' },
+        { name: 'Profile', icon: User, path: '/dashboard/profile' },
     ];
 
     return (

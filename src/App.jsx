@@ -6,6 +6,7 @@ import BookingsPage from './pages/BookingsPage';
 import InventoryPage from './pages/InventoryPage';
 import StaffPage from './pages/StaffPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="inventory" element={<InventoryPage />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
 
         {/* Catch all redirect to login */}
